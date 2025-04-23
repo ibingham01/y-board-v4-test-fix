@@ -4,5 +4,5 @@ To import it to your Platform IO project, add the following line to your `platfo
 
 ```ini
 lib_deps = 
-    https://github.com/y-board/y-board-v3
+    https://github.com/y-board/y-board-v4
 ```

@@ -1,5 +1,5 @@
-#ifndef YBOARDV3_H
-#define YBOARDV3_H
+#ifndef YBOARDV4_H
+#define YBOARDV4_H
 
 #include <Adafruit_SSD1306.h>
 #include <AudioTools.h>
@@ -17,10 +17,10 @@ struct accelerometer_data {
     float z;
 };
 
-class YBoardV3 {
+class YBoardV4 {
   public:
-    YBoardV3();
-    virtual ~YBoardV3();
+    YBoardV4();
+    virtual ~YBoardV4();
 
     /*
      *  This function initializes the YBoard. This function must be called before using any of the
@@ -268,6 +268,6 @@ class YBoardV3 {
     bool setup_display();
 };
 
-extern YBoardV3 Yboard;
+extern YBoardV4 Yboard;
 
-#endif /* YBOARDV3_H */
+#endif /* YBOARDV4_H */
