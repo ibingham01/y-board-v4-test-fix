@@ -1,0 +1,42 @@
+{
+    "name": "Y-Board v3",
+    "version": "1.0.0",
+    "description": "A library for interacting with version 3 of the Y-Board hardware",
+    "keywords": "education, y-board",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/y-board/y-board-v3.git"
+    },
+    "authors": [
+        {
+            "name": "Philip Lundrigan",
+            "email": "lundrigan@byu.edu",
+            "url": "https://philip.lundrigan.org",
+            "maintainer": true
+        },
+        {
+            "name": "Jeff Goeders",
+            "email": "jgoeders@byu.edu",
+            "url": "https://jeffgoeders.com"
+        }
+    ],
+    "license": "MIT",
+    "homepage": "https://y-board.github.io",
+    "dependencies": {
+        "adafruit/Adafruit NeoPixel": "^1.12.2",
+        "sparkfun/SparkFun LIS2DH12 Arduino Library": "^1.0.3",
+        "adafruit/Adafruit SSD1306": "^2.5.10",
+        "adafruit/Adafruit BusIO": "*",
+        "adafruit/Adafruit SH110X": "*",
+        "adafruit/Adafruit GFX Library": "*",
+        "adafruit/Adafruit Unified Sensor": "*",
+        "arduino-libhelix": "https://github.com/pschatzmann/arduino-libhelix.git#v0.8.6",
+        "arduino-audio-tools": "https://github.com/pschatzmann/arduino-audio-tools.git#v1.0.1"
+    },
+    "frameworks": [
+        "arduino"
+    ],
+    "platforms": [
+        "espressif32"
+    ]
+}
