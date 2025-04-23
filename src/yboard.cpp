@@ -41,7 +41,7 @@ void YBoardV4::setup_leds() {
 }
 
 void YBoardV4::set_led_color(uint16_t index, uint8_t red, uint8_t green, uint8_t blue) {
-    leds[index - 1] = CRGB(red, green, blue);
+    leds[index] = CRGB(red, green, blue);
     FastLED.show();
 }
 
@@ -51,7 +51,7 @@ void YBoardV4::set_led_brightness(uint8_t brightness) {
 }
 
 void YBoardV4::set_all_leds_color(uint8_t red, uint8_t green, uint8_t blue) {
-    fill_solid(leds, led_count, CRGB(red, green, blue));
+    fill_solid(leds + 1, led_count, CRGB(red, green, blue));
     FastLED.show();
 }
 
