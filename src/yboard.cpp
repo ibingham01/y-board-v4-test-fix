@@ -2,7 +2,9 @@
 
 YBoardV3 Yboard;
 
-YBoardV3::YBoardV3() : strip(led_count, led_pin, NEO_GRB + NEO_KHZ800), display(128, 32) {}
+YBoardV3::YBoardV3() : display(128, 32) {
+    FastLED.addLeds<APA102, led_data_pin, led_clock_pin, BGR>(leds, led_count);
+}
 
 YBoardV3::~YBoardV3() {}
 
@@ -34,26 +36,23 @@ void YBoardV3::setup() {
 
 ////////////////////////////// LEDs ///////////////////////////////
 void YBoardV3::setup_leds() {
-    strip.begin();
-    strip.clear();
+    FastLED.clear();
     set_led_brightness(50);
 }
 
 void YBoardV3::set_led_color(uint16_t index, uint8_t red, uint8_t green, uint8_t blue) {
-    strip.setPixelColor(index - 1, red, green, blue);
-    strip.show();
+    leds[index - 1] = CRGB(red, green, blue);
+    FastLED.show();
 }
 
 void YBoardV3::set_led_brightness(uint8_t brightness) {
-    strip.setBrightness(brightness);
-    strip.show();
+    FastLED.setBrightness(brightness);
+    FastLED.show();
 }
 
 void YBoardV3::set_all_leds_color(uint8_t red, uint8_t green, uint8_t blue) {
-    for (int i = 0; i < this->led_count; i++) {
-        strip.setPixelColor(i, red, green, blue, false);
-    }
-    strip.show();
+    fill_solid(leds, led_count, CRGB(red, green, blue));
+    FastLED.show();
 }
 
 ////////////////////////////// Switches ///////////////////////////////

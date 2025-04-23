@@ -1,10 +1,10 @@
 #ifndef YBOARDV3_H
 #define YBOARDV3_H
 
-#include <Adafruit_NeoPixel.h>
 #include <Adafruit_SSD1306.h>
 #include <AudioTools.h>
 #include <FS.h>
+#include <FastLED.h>
 #include <SD.h>
 #include <SparkFun_LIS2DH12.h>
 #include <stdint.h>
@@ -217,8 +217,9 @@ class YBoardV3 {
     Adafruit_SSD1306 display;
 
     // LEDs
-    static constexpr int led_pin = 5;
-    static constexpr int led_count = 20;
+    static constexpr int led_clock_pin = 4;
+    static constexpr int led_data_pin = 5;
+    static constexpr int led_count = 36;
 
     // Controls
     static constexpr int knob_pin = 9;
@@ -252,7 +253,7 @@ class YBoardV3 {
     static constexpr int mic_i2s_port = 0;
 
   private:
-    Adafruit_NeoPixel strip;
+    CRGB leds[led_count];
     SPARKFUN_LIS2DH12 accel;
     bool wire_begin = false;
     bool sd_card_present = false;
