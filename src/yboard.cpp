@@ -2,7 +2,7 @@
 
 YBoardV4 Yboard;
 
-YBoardV4::YBoardV4() : display(128, 32) {
+YBoardV4::YBoardV4() : display(128, 64) {
     FastLED.addLeds<APA102, led_data_pin, led_clock_pin, BGR>(leds, led_count);
 }
 
@@ -251,7 +251,7 @@ bool YBoardV4::setup_display() {
 
     display.clearDisplay();
     display.setTextColor(WHITE);
-    display.setRotation(0);
+    display.setRotation(2);
     display.setTextWrap(false);
     display.setCursor(0, 0);
     display.display();
