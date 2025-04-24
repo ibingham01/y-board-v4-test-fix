@@ -4,6 +4,7 @@
 #include <Adafruit_MCP23X17.h>
 #include <Adafruit_SSD1306.h>
 #include <AudioTools.h>
+#include <ESP32Encoder.h>
 #include <FS.h>
 #include <FastLED.h>
 #include <SD.h>
@@ -80,14 +81,14 @@ class YBoardV4 {
 
     /*
      *  This function returns the value of the knob.
-     *  The return type is an integer between 0 and 100, representing the position
-     * of the knob. A value of 0 corresponds to the knob being turned all the way to
-     * the left, and a value of 100 corresponds to the knob being turned all the way
-     * to the right.
      */
-    int get_knob();
+    int64_t get_knob();
 
     bool get_knob_button();
+
+    void reset_knob();
+
+    void set_knob(int64_t value);
 
     bool get_dip_switch(uint8_t dip_switch_idx);
 
@@ -221,6 +222,9 @@ class YBoardV4 {
     // Display
     Adafruit_SSD1306 display;
 
+    // Rotary Encoder
+    ESP32Encoder encoder;
+
     // LEDs
     static constexpr int led_clock_pin = 4;
     static constexpr int led_data_pin = 5;
@@ -243,6 +247,10 @@ class YBoardV4 {
     static constexpr int gpio_sw2 = 13;
     static constexpr int gpio_sw3 = 14;
     static constexpr int gpio_sw4 = 15;
+
+    // Rotary Encoder
+    static constexpr int rot_enc_a = 37;
+    static constexpr int rot_enc_b = 38;
 
     // I2C Connections
     static constexpr int sda_pin = 2;

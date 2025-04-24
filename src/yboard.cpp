@@ -64,6 +64,7 @@ void YBoardV4::set_all_leds_color(uint8_t red, uint8_t green, uint8_t blue) {
 void YBoardV4::setup_io() {
     mcp.begin_I2C(gpio_addr, &lowerWire);
 
+    // Setup pins for buttons/switches/dip switches
     mcp.pinMode(gpio_dsw1, INPUT);
     mcp.pinMode(gpio_dsw2, INPUT);
     mcp.pinMode(gpio_dsw3, INPUT);
@@ -80,6 +81,11 @@ void YBoardV4::setup_io() {
     mcp.pinMode(gpio_sw2, INPUT);
     mcp.pinMode(gpio_sw3, INPUT);
     mcp.pinMode(gpio_sw4, INPUT);
+
+    // Set up pins for rotary encoder
+    ESP32Encoder::useInternalWeakPullResistors = puType::none;
+    encoder.attachHalfQuad(rot_enc_a, rot_enc_b);
+    encoder.clearCount();
 }
 
 ////////////////////////////// Switches/Buttons ///////////////////////////////
@@ -99,13 +105,11 @@ bool YBoardV4::get_button(uint8_t button_idx) {
     return mcp.digitalRead(gpio_but5 + button_idx - 1);
 }
 
-int YBoardV4::get_knob() {
-    // int value = map(analogRead(this->knob_pin), 2888, 8, 0, 100);
-    // value = max(0, value);
-    // value = min(100, value);
-    // return value;
-    return 0;
-}
+int64_t YBoardV4::get_knob() { return -1 * encoder.getCount(); }
+
+void YBoardV4::reset_knob() { encoder.clearCount(); }
+
+void YBoardV4::set_knob(int64_t value) { encoder.setCount(-1 * value); }
 
 bool YBoardV4::get_knob_button() { return mcp.digitalRead(gpio_knob_but6); }
 
