@@ -51,7 +51,11 @@ void YBoardV4::set_led_color(uint16_t index, uint8_t red, uint8_t green, uint8_t
 }
 
 void YBoardV4::set_led_brightness(uint8_t brightness) {
-    FastLED.setBrightness(brightness);
+    if (brightness > 255) {
+        brightness = 255;
+    }
+    uint8_t adjusted_brightness = dim8_lin(brightness);
+    FastLED.setBrightness(adjusted_brightness);
     FastLED.show();
 }
 
