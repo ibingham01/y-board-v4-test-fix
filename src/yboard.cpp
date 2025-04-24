@@ -42,7 +42,7 @@ void YBoardV4::setup_i2c() {
 ////////////////////////////// LEDs ///////////////////////////////
 void YBoardV4::setup_leds() {
     FastLED.clear();
-    set_led_brightness(50);
+    set_led_brightness(120);
 }
 
 void YBoardV4::set_led_color(uint16_t index, uint8_t red, uint8_t green, uint8_t blue) {
@@ -55,16 +55,24 @@ void YBoardV4::set_led_color(uint16_t index, uint8_t red, uint8_t green, uint8_t
 }
 
 void YBoardV4::set_led_brightness(uint8_t brightness) {
-    if (brightness > 255) {
-        brightness = 255;
+    if (brightness > 220) {
+        brightness = 220;
     }
-    uint8_t adjusted_brightness = dim8_lin(brightness);
+    int max_brightness = 220;                           // Maximum brightness
+    int total_steps = 220;                              // Number of fade steps
+    float gamma = 2.2;                                  // Gamma value for correction
+    float normalized = (float)brightness / total_steps; // Normalize step to [0, 1]
+    int adjusted_brightness = max_brightness * pow(normalized, gamma);
+
+    Serial.printf("Setting brightness to %d (%d)\n", adjusted_brightness, brightness);
+
+    // Apply the brightness to all LEDs
     FastLED.setBrightness(adjusted_brightness);
     FastLED.show();
 }
 
 void YBoardV4::set_all_leds_color(uint8_t red, uint8_t green, uint8_t blue) {
-    fill_solid(leds + 1, led_count, CRGB(red, green, blue));
+    fill_solid(leds + 1, led_count - 1, CRGB(red, green, blue));
     FastLED.show();
 }
 
