@@ -229,6 +229,24 @@ class YBoardV4 {
     static constexpr int button1_pin = 17;
     static constexpr int button2_pin = 7;
 
+    // GPIO Multiplexer
+    static constexpr int gpio_dsw1 = 0;
+    static constexpr int gpio_dsw2 = 1;
+    static constexpr int gpio_dsw3 = 2;
+    static constexpr int gpio_dsw4 = 3;
+    static constexpr int gpio_dsw5 = 4;
+    static constexpr int gpio_dsw6 = 5;
+    static constexpr int gpio_but6 = 6;
+    static constexpr int gpio_but5 = 7;
+    static constexpr int gpio_but4 = 8;
+    static constexpr int gpio_but3 = 9;
+    static constexpr int gpio_but2 = 10;
+    static constexpr int gpio_but1 = 11;
+    static constexpr int gpio_sw1 = 12;
+    static constexpr int gpio_sw2 = 13;
+    static constexpr int gpio_sw3 = 14;
+    static constexpr int gpio_sw4 = 15;
+
     // I2C Connections
     static constexpr int sda_pin = 2;
     static constexpr int scl_pin = 1;
@@ -242,6 +260,7 @@ class YBoardV4 {
     // I2C Devices
     static constexpr int accel_addr = 0x19;
     static constexpr int display_addr = 0x3c;
+    static constexpr int gpio_addr = 0x20;
 
     // microSD Card Reader connections
     static constexpr int sd_cs_pin = 10;

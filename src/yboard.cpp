@@ -62,48 +62,47 @@ void YBoardV4::set_all_leds_color(uint8_t red, uint8_t green, uint8_t blue) {
 
 ////////////////////////////////// IO //////////////////////////////////
 void YBoardV4::setup_io() {
-    // mcp.begin_I2C(GPIO_ADDR, &lowerWire);
-    // // set gpio int pin
+    mcp.begin_I2C(gpio_addr, &lowerWire);
     // pinMode(GPIO_INT, INPUT);
 
-    // // mirror INTA/B so only one wire required
-    // // active drive so INTA/B will not be floating
-    // // INTA/B will be signaled with a LOW
+    // mirror INTA/B so only one wire required
+    // active drive so INTA/B will not be floating
+    // INTA/B will be signaled with a LOW
     // mcp.setupInterrupts(true, false, LOW);
-    // // configure button pins for input
-    // mcp.pinMode(GPIO_DSW1, INPUT);
-    // mcp.pinMode(GPIO_DSW2, INPUT);
-    // mcp.pinMode(GPIO_DSW3, INPUT);
-    // mcp.pinMode(GPIO_DSW4, INPUT);
-    // mcp.pinMode(GPIO_DSW5, INPUT);
-    // mcp.pinMode(GPIO_DSW6, INPUT);
-    // mcp.pinMode(GPIO_BUT6, INPUT);
-    // mcp.pinMode(GPIO_BUT5, INPUT);
-    // mcp.pinMode(GPIO_BUT4, INPUT);
-    // mcp.pinMode(GPIO_BUT3, INPUT);
-    // mcp.pinMode(GPIO_BUT2, INPUT);
-    // mcp.pinMode(GPIO_BUT1, INPUT);
-    // mcp.pinMode(GPIO_SW1, INPUT);
-    // mcp.pinMode(GPIO_SW2, INPUT);
-    // mcp.pinMode(GPIO_SW3, INPUT);
-    // mcp.pinMode(GPIO_SW4, INPUT);
+    // configure button pins for input
+    mcp.pinMode(gpio_dsw1, INPUT);
+    mcp.pinMode(gpio_dsw2, INPUT);
+    mcp.pinMode(gpio_dsw3, INPUT);
+    mcp.pinMode(gpio_dsw4, INPUT);
+    mcp.pinMode(gpio_dsw5, INPUT);
+    mcp.pinMode(gpio_dsw6, INPUT);
+    mcp.pinMode(gpio_but6, INPUT);
+    mcp.pinMode(gpio_but5, INPUT);
+    mcp.pinMode(gpio_but4, INPUT);
+    mcp.pinMode(gpio_but3, INPUT);
+    mcp.pinMode(gpio_but2, INPUT);
+    mcp.pinMode(gpio_but1, INPUT);
+    mcp.pinMode(gpio_sw1, INPUT);
+    mcp.pinMode(gpio_sw2, INPUT);
+    mcp.pinMode(gpio_sw3, INPUT);
+    mcp.pinMode(gpio_sw4, INPUT);
     // // enable interrupt on button_pin
-    // mcp.setupInterruptPin(GPIO_DSW1, CHANGE);
-    // mcp.setupInterruptPin(GPIO_DSW2, CHANGE);
-    // mcp.setupInterruptPin(GPIO_DSW3, CHANGE);
-    // mcp.setupInterruptPin(GPIO_DSW4, CHANGE);
-    // mcp.setupInterruptPin(GPIO_DSW5, CHANGE);
-    // mcp.setupInterruptPin(GPIO_DSW6, CHANGE);
-    // mcp.setupInterruptPin(GPIO_BUT6, CHANGE);
-    // mcp.setupInterruptPin(GPIO_BUT5, CHANGE);
-    // mcp.setupInterruptPin(GPIO_BUT4, CHANGE);
-    // mcp.setupInterruptPin(GPIO_BUT3, CHANGE);
-    // mcp.setupInterruptPin(GPIO_BUT2, CHANGE);
-    // mcp.setupInterruptPin(GPIO_BUT1, CHANGE);
-    // mcp.setupInterruptPin(GPIO_SW1, CHANGE);
-    // mcp.setupInterruptPin(GPIO_SW2, CHANGE);
-    // mcp.setupInterruptPin(GPIO_SW3, CHANGE);
-    // mcp.setupInterruptPin(GPIO_SW4, CHANGE);
+    // mcp.setupInterruptPin(gpio_dsw1, CHANGE);
+    // mcp.setupInterruptPin(gpio_dsw2, CHANGE);
+    // mcp.setupInterruptPin(gpio_dsw3, CHANGE);
+    // mcp.setupInterruptPin(gpio_dsw4, CHANGE);
+    // mcp.setupInterruptPin(gpio_dsw5, CHANGE);
+    // mcp.setupInterruptPin(gpio_dsw6, CHANGE);
+    // mcp.setupInterruptPin(gpio_but6, CHANGE);
+    // mcp.setupInterruptPin(gpio_but5, CHANGE);
+    // mcp.setupInterruptPin(gpio_but4, CHANGE);
+    // mcp.setupInterruptPin(gpio_but3, CHANGE);
+    // mcp.setupInterruptPin(gpio_but2, CHANGE);
+    // mcp.setupInterruptPin(gpio_but1, CHANGE);
+    // mcp.setupInterruptPin(gpio_sw1, CHANGE);
+    // mcp.setupInterruptPin(gpio_sw2, CHANGE);
+    // mcp.setupInterruptPin(gpio_sw3, CHANGE);
+    // mcp.setupInterruptPin(gpio_sw4, CHANGE);
 }
 
 ////////////////////////////// Switches ///////////////////////////////
