@@ -1,8 +1,10 @@
 #ifndef YBOARDV4_H
 #define YBOARDV4_H
 
+#include <Adafruit_MCP23X17.h>
 #include <Adafruit_SSD1306.h>
 #include <AudioTools.h>
+#include <ESP32Encoder.h>
 #include <FS.h>
 #include <FastLED.h>
 #include <SD.h>
@@ -59,7 +61,7 @@ class YBoardV4 {
     ////////////////////////////// Switches/Buttons ///////////////////////////////
     /*
      *  This function returns the state of a switch.
-     *  The switch_idx is an integer between 1 and 2, representing the number of the
+     *  The switch_idx is an integer between 1 and 4, representing the number of the
      * target switch (for example, 1 corresponds to switch 1 on the board). The bool
      * return type means that this function returns a boolean value (true or false).
      *  True corresponds to the switch being on, and false corresponds to the switch
@@ -69,7 +71,7 @@ class YBoardV4 {
 
     /*
      *  This function returns the state of a button.
-     *  The button_idx is an integer between 1 and 2, representing the number of the
+     *  The button_idx is an integer between 1 and 5, representing the number of the
      * target button (for example, 1 corresponds to button 1 on the board). The bool
      * return type means that this function returns a boolean value (true or false).
      *  True corresponds to the button being pressed, and false corresponds to the
@@ -79,12 +81,16 @@ class YBoardV4 {
 
     /*
      *  This function returns the value of the knob.
-     *  The return type is an integer between 0 and 100, representing the position
-     * of the knob. A value of 0 corresponds to the knob being turned all the way to
-     * the left, and a value of 100 corresponds to the knob being turned all the way
-     * to the right.
      */
-    int get_knob();
+    int64_t get_knob();
+
+    bool get_knob_button();
+
+    void reset_knob();
+
+    void set_knob(int64_t value);
+
+    bool get_dip_switch(uint8_t dip_switch_idx);
 
     ////////////////////////////// Speaker/Tones //////////////////////////////////
     /*
@@ -216,25 +222,50 @@ class YBoardV4 {
     // Display
     Adafruit_SSD1306 display;
 
+    // Rotary Encoder
+    ESP32Encoder encoder;
+
     // LEDs
     static constexpr int led_clock_pin = 4;
     static constexpr int led_data_pin = 5;
     static constexpr int led_count = 36;
 
-    // Controls
-    static constexpr int knob_pin = 9;
-    static constexpr int switch1_pin = 16;
-    static constexpr int switch2_pin = 18;
-    static constexpr int button1_pin = 17;
-    static constexpr int button2_pin = 7;
+    // GPIO Multiplexer
+    static constexpr int gpio_dsw1 = 0;
+    static constexpr int gpio_dsw2 = 1;
+    static constexpr int gpio_dsw3 = 2;
+    static constexpr int gpio_dsw4 = 3;
+    static constexpr int gpio_dsw5 = 4;
+    static constexpr int gpio_dsw6 = 5;
+    static constexpr int gpio_knob_but6 = 6;
+    static constexpr int gpio_but5 = 7;
+    static constexpr int gpio_but4 = 8;
+    static constexpr int gpio_but3 = 9;
+    static constexpr int gpio_but2 = 10;
+    static constexpr int gpio_but1 = 11;
+    static constexpr int gpio_sw1 = 12;
+    static constexpr int gpio_sw2 = 13;
+    static constexpr int gpio_sw3 = 14;
+    static constexpr int gpio_sw4 = 15;
+
+    // Rotary Encoder
+    static constexpr int rot_enc_a = 37;
+    static constexpr int rot_enc_b = 38;
 
     // I2C Connections
     static constexpr int sda_pin = 2;
     static constexpr int scl_pin = 1;
+    static constexpr int upper_i2c_freq = 100000;
+    static constexpr int upper_i2c_data = 2;
+    static constexpr int upper_i2c_clk = 1;
+    static constexpr int lower_i2c_freq = 100000;
+    static constexpr int lower_i2c_data = 18;
+    static constexpr int lower_i2c_clk = 17;
 
     // I2C Devices
     static constexpr int accel_addr = 0x19;
     static constexpr int display_addr = 0x3c;
+    static constexpr int gpio_addr = 0x20;
 
     // microSD Card Reader connections
     static constexpr int sd_cs_pin = 10;
@@ -254,14 +285,25 @@ class YBoardV4 {
     static constexpr int mic_i2s_port = 0;
 
   private:
-    CRGB leds[led_count];
-    SPARKFUN_LIS2DH12 accel;
     bool wire_begin = false;
     bool sd_card_present = false;
 
+    // LEDs
+    CRGB leds[led_count];
+
+    // I2C buses
+    TwoWire upperWire = TwoWire(0);
+    TwoWire lowerWire = TwoWire(1);
+
+    // Accelerometer
+    SPARKFUN_LIS2DH12 accel;
+
+    // GPIO multiplixer
+    Adafruit_MCP23X17 mcp;
+
+    void setup_i2c();
     void setup_leds();
-    void setup_switches();
-    void setup_buttons();
+    void setup_io();
     bool setup_speaker();
     bool setup_mic();
     bool setup_accelerometer();

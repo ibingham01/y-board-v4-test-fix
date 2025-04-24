@@ -2,7 +2,7 @@
 
 YBoardV4 Yboard;
 
-YBoardV4::YBoardV4() : display(128, 64) {
+YBoardV4::YBoardV4() : display(128, 64, &upperWire) {
     FastLED.addLeds<APA102, led_data_pin, led_clock_pin, BGR>(leds, led_count);
 }
 
@@ -10,8 +10,8 @@ YBoardV4::~YBoardV4() {}
 
 void YBoardV4::setup() {
     setup_leds();
-    setup_switches();
-    setup_buttons();
+    setup_i2c();
+    setup_io();
 
     if (setup_sd_card()) {
         Serial.println("SD Card Setup: Success");
@@ -32,6 +32,11 @@ void YBoardV4::setup() {
     if (setup_display()) {
         Serial.println("Display Setup: Success");
     }
+}
+
+void YBoardV4::setup_i2c() {
+    lowerWire.begin(this->lower_i2c_data, this->lower_i2c_clk, this->lower_i2c_freq);
+    upperWire.begin(this->upper_i2c_data, this->upper_i2c_clk, this->upper_i2c_freq);
 }
 
 ////////////////////////////// LEDs ///////////////////////////////
@@ -55,51 +60,69 @@ void YBoardV4::set_all_leds_color(uint8_t red, uint8_t green, uint8_t blue) {
     FastLED.show();
 }
 
-////////////////////////////// Switches ///////////////////////////////
-void YBoardV4::setup_switches() {
-    pinMode(this->switch1_pin, INPUT);
-    pinMode(this->switch2_pin, INPUT);
+////////////////////////////////// IO //////////////////////////////////
+void YBoardV4::setup_io() {
+    mcp.begin_I2C(gpio_addr, &lowerWire);
+
+    // Setup pins for buttons/switches/dip switches
+    mcp.pinMode(gpio_dsw1, INPUT);
+    mcp.pinMode(gpio_dsw2, INPUT);
+    mcp.pinMode(gpio_dsw3, INPUT);
+    mcp.pinMode(gpio_dsw4, INPUT);
+    mcp.pinMode(gpio_dsw5, INPUT);
+    mcp.pinMode(gpio_dsw6, INPUT);
+    mcp.pinMode(gpio_knob_but6, INPUT);
+    mcp.pinMode(gpio_but5, INPUT);
+    mcp.pinMode(gpio_but4, INPUT);
+    mcp.pinMode(gpio_but3, INPUT);
+    mcp.pinMode(gpio_but2, INPUT);
+    mcp.pinMode(gpio_but1, INPUT);
+    mcp.pinMode(gpio_sw1, INPUT);
+    mcp.pinMode(gpio_sw2, INPUT);
+    mcp.pinMode(gpio_sw3, INPUT);
+    mcp.pinMode(gpio_sw4, INPUT);
+
+    // Set up pins for rotary encoder
+    ESP32Encoder::useInternalWeakPullResistors = puType::none;
+    encoder.attachHalfQuad(rot_enc_a, rot_enc_b);
+    encoder.clearCount();
 }
 
+////////////////////////////// Switches/Buttons ///////////////////////////////
 bool YBoardV4::get_switch(uint8_t switch_idx) {
-    switch (switch_idx) {
-    case 1:
-        return digitalRead(this->switch1_pin);
-    case 2:
-        return digitalRead(this->switch2_pin);
-    default:
+    if (switch_idx < 1 || switch_idx > 4) {
         return false;
     }
-}
 
-////////////////////////////// Buttons ///////////////////////////////
-void YBoardV4::setup_buttons() {
-    pinMode(this->button1_pin, INPUT);
-    pinMode(this->button2_pin, INPUT);
+    return mcp.digitalRead(gpio_sw1 + switch_idx - 1);
 }
 
 bool YBoardV4::get_button(uint8_t button_idx) {
-    switch (button_idx) {
-    case 1:
-        return !digitalRead(this->button1_pin);
-    case 2:
-        return !digitalRead(this->button2_pin);
-    default:
+    if (button_idx < 1 || button_idx > 6) {
         return false;
     }
+
+    return mcp.digitalRead(gpio_but5 + button_idx - 1);
 }
 
-////////////////////////////// Knob ///////////////////////////////
-int YBoardV4::get_knob() {
-    int value = map(analogRead(this->knob_pin), 2888, 8, 0, 100);
-    value = max(0, value);
-    value = min(100, value);
-    return value;
+int64_t YBoardV4::get_knob() { return -1 * encoder.getCount(); }
+
+void YBoardV4::reset_knob() { encoder.clearCount(); }
+
+void YBoardV4::set_knob(int64_t value) { encoder.setCount(-1 * value); }
+
+bool YBoardV4::get_knob_button() { return mcp.digitalRead(gpio_knob_but6); }
+
+bool YBoardV4::get_dip_switch(uint8_t dip_switch_idx) {
+    if (dip_switch_idx < 1 || dip_switch_idx > 6) {
+        return false;
+    }
+
+    return !mcp.digitalRead(gpio_dsw1 + dip_switch_idx - 1);
 }
 
 ////////////////////////////// Speaker/Tones //////////////////////////////////
 bool YBoardV4::setup_speaker() {
-
     if (!YAudio::setup_speaker(speaker_i2s_ws_pin, speaker_i2s_bclk_pin, speaker_i2s_data_pin,
                                speaker_i2s_port)) {
         Serial.println("ERROR: Speaker setup failed.");
