@@ -46,6 +46,10 @@ void YBoardV4::setup_leds() {
 }
 
 void YBoardV4::set_led_color(uint16_t index, uint8_t red, uint8_t green, uint8_t blue) {
+    if (index < 1 || index > led_count) {
+        Serial.printf("ERROR: LED index %d out of range (1-%d)\n", index, led_count);
+        return;
+    }
     leds[index] = CRGB(red, green, blue);
     FastLED.show();
 }
