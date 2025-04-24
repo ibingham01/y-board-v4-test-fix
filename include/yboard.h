@@ -1,6 +1,7 @@
 #ifndef YBOARDV4_H
 #define YBOARDV4_H
 
+#include <Adafruit_MCP23X17.h>
 #include <Adafruit_SSD1306.h>
 #include <AudioTools.h>
 #include <FS.h>
@@ -231,6 +232,12 @@ class YBoardV4 {
     // I2C Connections
     static constexpr int sda_pin = 2;
     static constexpr int scl_pin = 1;
+    static constexpr int upper_i2c_freq = 100000;
+    static constexpr int upper_i2c_data = 2;
+    static constexpr int upper_i2c_clk = 1;
+    static constexpr int lower_i2c_freq = 100000;
+    static constexpr int lower_i2c_data = 18;
+    static constexpr int lower_i2c_clk = 17;
 
     // I2C Devices
     static constexpr int accel_addr = 0x19;
@@ -254,14 +261,25 @@ class YBoardV4 {
     static constexpr int mic_i2s_port = 0;
 
   private:
-    CRGB leds[led_count];
-    SPARKFUN_LIS2DH12 accel;
     bool wire_begin = false;
     bool sd_card_present = false;
 
+    // LEDs
+    CRGB leds[led_count];
+
+    // I2C buses
+    TwoWire upperWire = TwoWire(0);
+    TwoWire lowerWire = TwoWire(1);
+
+    // Accelerometer
+    SPARKFUN_LIS2DH12 accel;
+
+    // GPIO multiplixer
+    Adafruit_MCP23X17 mcp;
+
+    void setup_i2c();
     void setup_leds();
-    void setup_switches();
-    void setup_buttons();
+    void setup_io();
     bool setup_speaker();
     bool setup_mic();
     bool setup_accelerometer();

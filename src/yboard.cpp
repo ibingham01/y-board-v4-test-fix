@@ -2,7 +2,7 @@
 
 YBoardV4 Yboard;
 
-YBoardV4::YBoardV4() : display(128, 64) {
+YBoardV4::YBoardV4() : display(128, 64, &upperWire) {
     FastLED.addLeds<APA102, led_data_pin, led_clock_pin, BGR>(leds, led_count);
 }
 
@@ -10,8 +10,8 @@ YBoardV4::~YBoardV4() {}
 
 void YBoardV4::setup() {
     setup_leds();
-    setup_switches();
-    setup_buttons();
+    setup_i2c();
+    setup_io();
 
     if (setup_sd_card()) {
         Serial.println("SD Card Setup: Success");
@@ -32,6 +32,11 @@ void YBoardV4::setup() {
     if (setup_display()) {
         Serial.println("Display Setup: Success");
     }
+}
+
+void YBoardV4::setup_i2c() {
+    lowerWire.begin(this->lower_i2c_data, this->lower_i2c_clk, this->lower_i2c_freq);
+    upperWire.begin(this->upper_i2c_data, this->upper_i2c_clk, this->upper_i2c_freq);
 }
 
 ////////////////////////////// LEDs ///////////////////////////////
@@ -55,12 +60,53 @@ void YBoardV4::set_all_leds_color(uint8_t red, uint8_t green, uint8_t blue) {
     FastLED.show();
 }
 
-////////////////////////////// Switches ///////////////////////////////
-void YBoardV4::setup_switches() {
-    pinMode(this->switch1_pin, INPUT);
-    pinMode(this->switch2_pin, INPUT);
+////////////////////////////////// IO //////////////////////////////////
+void YBoardV4::setup_io() {
+    // mcp.begin_I2C(GPIO_ADDR, &lowerWire);
+    // // set gpio int pin
+    // pinMode(GPIO_INT, INPUT);
+
+    // // mirror INTA/B so only one wire required
+    // // active drive so INTA/B will not be floating
+    // // INTA/B will be signaled with a LOW
+    // mcp.setupInterrupts(true, false, LOW);
+    // // configure button pins for input
+    // mcp.pinMode(GPIO_DSW1, INPUT);
+    // mcp.pinMode(GPIO_DSW2, INPUT);
+    // mcp.pinMode(GPIO_DSW3, INPUT);
+    // mcp.pinMode(GPIO_DSW4, INPUT);
+    // mcp.pinMode(GPIO_DSW5, INPUT);
+    // mcp.pinMode(GPIO_DSW6, INPUT);
+    // mcp.pinMode(GPIO_BUT6, INPUT);
+    // mcp.pinMode(GPIO_BUT5, INPUT);
+    // mcp.pinMode(GPIO_BUT4, INPUT);
+    // mcp.pinMode(GPIO_BUT3, INPUT);
+    // mcp.pinMode(GPIO_BUT2, INPUT);
+    // mcp.pinMode(GPIO_BUT1, INPUT);
+    // mcp.pinMode(GPIO_SW1, INPUT);
+    // mcp.pinMode(GPIO_SW2, INPUT);
+    // mcp.pinMode(GPIO_SW3, INPUT);
+    // mcp.pinMode(GPIO_SW4, INPUT);
+    // // enable interrupt on button_pin
+    // mcp.setupInterruptPin(GPIO_DSW1, CHANGE);
+    // mcp.setupInterruptPin(GPIO_DSW2, CHANGE);
+    // mcp.setupInterruptPin(GPIO_DSW3, CHANGE);
+    // mcp.setupInterruptPin(GPIO_DSW4, CHANGE);
+    // mcp.setupInterruptPin(GPIO_DSW5, CHANGE);
+    // mcp.setupInterruptPin(GPIO_DSW6, CHANGE);
+    // mcp.setupInterruptPin(GPIO_BUT6, CHANGE);
+    // mcp.setupInterruptPin(GPIO_BUT5, CHANGE);
+    // mcp.setupInterruptPin(GPIO_BUT4, CHANGE);
+    // mcp.setupInterruptPin(GPIO_BUT3, CHANGE);
+    // mcp.setupInterruptPin(GPIO_BUT2, CHANGE);
+    // mcp.setupInterruptPin(GPIO_BUT1, CHANGE);
+    // mcp.setupInterruptPin(GPIO_SW1, CHANGE);
+    // mcp.setupInterruptPin(GPIO_SW2, CHANGE);
+    // mcp.setupInterruptPin(GPIO_SW3, CHANGE);
+    // mcp.setupInterruptPin(GPIO_SW4, CHANGE);
 }
 
+////////////////////////////// Switches ///////////////////////////////
 bool YBoardV4::get_switch(uint8_t switch_idx) {
     switch (switch_idx) {
     case 1:
@@ -73,11 +119,6 @@ bool YBoardV4::get_switch(uint8_t switch_idx) {
 }
 
 ////////////////////////////// Buttons ///////////////////////////////
-void YBoardV4::setup_buttons() {
-    pinMode(this->button1_pin, INPUT);
-    pinMode(this->button2_pin, INPUT);
-}
-
 bool YBoardV4::get_button(uint8_t button_idx) {
     switch (button_idx) {
     case 1:
@@ -99,7 +140,6 @@ int YBoardV4::get_knob() {
 
 ////////////////////////////// Speaker/Tones //////////////////////////////////
 bool YBoardV4::setup_speaker() {
-
     if (!YAudio::setup_speaker(speaker_i2s_ws_pin, speaker_i2s_bclk_pin, speaker_i2s_data_pin,
                                speaker_i2s_port)) {
         Serial.println("ERROR: Speaker setup failed.");
