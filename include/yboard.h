@@ -60,7 +60,7 @@ class YBoardV4 {
     ////////////////////////////// Switches/Buttons ///////////////////////////////
     /*
      *  This function returns the state of a switch.
-     *  The switch_idx is an integer between 1 and 2, representing the number of the
+     *  The switch_idx is an integer between 1 and 4, representing the number of the
      * target switch (for example, 1 corresponds to switch 1 on the board). The bool
      * return type means that this function returns a boolean value (true or false).
      *  True corresponds to the switch being on, and false corresponds to the switch
@@ -70,7 +70,7 @@ class YBoardV4 {
 
     /*
      *  This function returns the state of a button.
-     *  The button_idx is an integer between 1 and 2, representing the number of the
+     *  The button_idx is an integer between 1 and 5, representing the number of the
      * target button (for example, 1 corresponds to button 1 on the board). The bool
      * return type means that this function returns a boolean value (true or false).
      *  True corresponds to the button being pressed, and false corresponds to the
@@ -86,6 +86,8 @@ class YBoardV4 {
      * to the right.
      */
     int get_knob();
+
+    bool get_knob_button();
 
     ////////////////////////////// Speaker/Tones //////////////////////////////////
     /*
@@ -222,13 +224,6 @@ class YBoardV4 {
     static constexpr int led_data_pin = 5;
     static constexpr int led_count = 36;
 
-    // Controls
-    static constexpr int knob_pin = 9;
-    static constexpr int switch1_pin = 16;
-    static constexpr int switch2_pin = 18;
-    static constexpr int button1_pin = 17;
-    static constexpr int button2_pin = 7;
-
     // GPIO Multiplexer
     static constexpr int gpio_dsw1 = 0;
     static constexpr int gpio_dsw2 = 1;
@@ -236,7 +231,7 @@ class YBoardV4 {
     static constexpr int gpio_dsw4 = 3;
     static constexpr int gpio_dsw5 = 4;
     static constexpr int gpio_dsw6 = 5;
-    static constexpr int gpio_but6 = 6;
+    static constexpr int gpio_knob_but6 = 6;
     static constexpr int gpio_but5 = 7;
     static constexpr int gpio_but4 = 8;
     static constexpr int gpio_but3 = 9;

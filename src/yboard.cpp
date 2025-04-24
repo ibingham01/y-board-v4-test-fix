@@ -63,20 +63,14 @@ void YBoardV4::set_all_leds_color(uint8_t red, uint8_t green, uint8_t blue) {
 ////////////////////////////////// IO //////////////////////////////////
 void YBoardV4::setup_io() {
     mcp.begin_I2C(gpio_addr, &lowerWire);
-    // pinMode(GPIO_INT, INPUT);
 
-    // mirror INTA/B so only one wire required
-    // active drive so INTA/B will not be floating
-    // INTA/B will be signaled with a LOW
-    // mcp.setupInterrupts(true, false, LOW);
-    // configure button pins for input
     mcp.pinMode(gpio_dsw1, INPUT);
     mcp.pinMode(gpio_dsw2, INPUT);
     mcp.pinMode(gpio_dsw3, INPUT);
     mcp.pinMode(gpio_dsw4, INPUT);
     mcp.pinMode(gpio_dsw5, INPUT);
     mcp.pinMode(gpio_dsw6, INPUT);
-    mcp.pinMode(gpio_but6, INPUT);
+    mcp.pinMode(gpio_knob_but6, INPUT);
     mcp.pinMode(gpio_but5, INPUT);
     mcp.pinMode(gpio_but4, INPUT);
     mcp.pinMode(gpio_but3, INPUT);
@@ -86,56 +80,34 @@ void YBoardV4::setup_io() {
     mcp.pinMode(gpio_sw2, INPUT);
     mcp.pinMode(gpio_sw3, INPUT);
     mcp.pinMode(gpio_sw4, INPUT);
-    // // enable interrupt on button_pin
-    // mcp.setupInterruptPin(gpio_dsw1, CHANGE);
-    // mcp.setupInterruptPin(gpio_dsw2, CHANGE);
-    // mcp.setupInterruptPin(gpio_dsw3, CHANGE);
-    // mcp.setupInterruptPin(gpio_dsw4, CHANGE);
-    // mcp.setupInterruptPin(gpio_dsw5, CHANGE);
-    // mcp.setupInterruptPin(gpio_dsw6, CHANGE);
-    // mcp.setupInterruptPin(gpio_but6, CHANGE);
-    // mcp.setupInterruptPin(gpio_but5, CHANGE);
-    // mcp.setupInterruptPin(gpio_but4, CHANGE);
-    // mcp.setupInterruptPin(gpio_but3, CHANGE);
-    // mcp.setupInterruptPin(gpio_but2, CHANGE);
-    // mcp.setupInterruptPin(gpio_but1, CHANGE);
-    // mcp.setupInterruptPin(gpio_sw1, CHANGE);
-    // mcp.setupInterruptPin(gpio_sw2, CHANGE);
-    // mcp.setupInterruptPin(gpio_sw3, CHANGE);
-    // mcp.setupInterruptPin(gpio_sw4, CHANGE);
 }
 
-////////////////////////////// Switches ///////////////////////////////
+////////////////////////////// Switches/Buttons ///////////////////////////////
 bool YBoardV4::get_switch(uint8_t switch_idx) {
-    switch (switch_idx) {
-    case 1:
-        return digitalRead(this->switch1_pin);
-    case 2:
-        return digitalRead(this->switch2_pin);
-    default:
+    if (switch_idx < 1 || switch_idx > 4) {
         return false;
     }
+
+    return mcp.digitalRead(gpio_sw1 + switch_idx - 1);
 }
 
-////////////////////////////// Buttons ///////////////////////////////
 bool YBoardV4::get_button(uint8_t button_idx) {
-    switch (button_idx) {
-    case 1:
-        return !digitalRead(this->button1_pin);
-    case 2:
-        return !digitalRead(this->button2_pin);
-    default:
+    if (button_idx < 1 || button_idx > 6) {
         return false;
     }
+
+    return mcp.digitalRead(gpio_but5 + button_idx - 1);
 }
 
-////////////////////////////// Knob ///////////////////////////////
 int YBoardV4::get_knob() {
-    int value = map(analogRead(this->knob_pin), 2888, 8, 0, 100);
-    value = max(0, value);
-    value = min(100, value);
-    return value;
+    // int value = map(analogRead(this->knob_pin), 2888, 8, 0, 100);
+    // value = max(0, value);
+    // value = min(100, value);
+    // return value;
+    return 0;
 }
+
+bool YBoardV4::get_knob_button() { return mcp.digitalRead(gpio_knob_but6); }
 
 ////////////////////////////// Speaker/Tones //////////////////////////////////
 bool YBoardV4::setup_speaker() {
