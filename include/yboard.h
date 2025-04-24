@@ -234,6 +234,7 @@ class YBoardV4 {
 
     // I2C Devices
     static constexpr int accel_addr = 0x19;
+    static constexpr int display_addr = 0x3c;
 
     // microSD Card Reader connections
     static constexpr int sd_cs_pin = 10;

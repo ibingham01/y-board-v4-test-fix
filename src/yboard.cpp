@@ -244,7 +244,7 @@ bool YBoardV4::setup_sd_card() {
 }
 
 bool YBoardV4::setup_display() {
-    if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3c)) {
+    if (!display.begin(SSD1306_SWITCHCAPVCC, display_addr)) {
         Serial.println("Error initializing display");
         return false;
     }
