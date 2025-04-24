@@ -109,6 +109,14 @@ int YBoardV4::get_knob() {
 
 bool YBoardV4::get_knob_button() { return mcp.digitalRead(gpio_knob_but6); }
 
+bool YBoardV4::get_dip_switch(uint8_t dip_switch_idx) {
+    if (dip_switch_idx < 1 || dip_switch_idx > 6) {
+        return false;
+    }
+
+    return !mcp.digitalRead(gpio_dsw1 + dip_switch_idx - 1);
+}
+
 ////////////////////////////// Speaker/Tones //////////////////////////////////
 bool YBoardV4::setup_speaker() {
     if (!YAudio::setup_speaker(speaker_i2s_ws_pin, speaker_i2s_bclk_pin, speaker_i2s_data_pin,

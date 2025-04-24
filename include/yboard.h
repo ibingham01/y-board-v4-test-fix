@@ -89,6 +89,8 @@ class YBoardV4 {
 
     bool get_knob_button();
 
+    bool get_dip_switch(uint8_t dip_switch_idx);
+
     ////////////////////////////// Speaker/Tones //////////////////////////////////
     /*
      *  This function plays a sound on the speaker. The filename is a string
