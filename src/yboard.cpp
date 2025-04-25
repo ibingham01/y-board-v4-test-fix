@@ -118,7 +118,7 @@ bool YBoardV4::get_button(uint8_t button_idx) {
         return false;
     }
 
-    return mcp.digitalRead(gpio_but5 + button_idx - 1);
+    return !mcp.digitalRead(gpio_but5 + button_idx - 1);
 }
 
 int64_t YBoardV4::get_knob() { return encoder.getCount(); }
@@ -127,7 +127,7 @@ void YBoardV4::reset_knob() { encoder.clearCount(); }
 
 void YBoardV4::set_knob(int64_t value) { encoder.setCount(value); }
 
-bool YBoardV4::get_knob_button() { return mcp.digitalRead(gpio_knob_but6); }
+bool YBoardV4::get_knob_button() { return !mcp.digitalRead(gpio_knob_but6); }
 
 bool YBoardV4::get_dip_switch(uint8_t dip_switch_idx) {
     if (dip_switch_idx < 1 || dip_switch_idx > 6) {
