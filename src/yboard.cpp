@@ -100,7 +100,7 @@ void YBoardV4::setup_io() {
 
     // Set up pins for rotary encoder
     ESP32Encoder::useInternalWeakPullResistors = puType::none;
-    encoder.attachHalfQuad(rot_enc_a, rot_enc_b);
+    encoder.attachHalfQuad(rot_enc_b, rot_enc_a);
     encoder.clearCount();
 }
 
@@ -121,11 +121,11 @@ bool YBoardV4::get_button(uint8_t button_idx) {
     return mcp.digitalRead(gpio_but5 + button_idx - 1);
 }
 
-int64_t YBoardV4::get_knob() { return -1 * encoder.getCount(); }
+int64_t YBoardV4::get_knob() { return encoder.getCount(); }
 
 void YBoardV4::reset_knob() { encoder.clearCount(); }
 
-void YBoardV4::set_knob(int64_t value) { encoder.setCount(-1 * value); }
+void YBoardV4::set_knob(int64_t value) { encoder.setCount(value); }
 
 bool YBoardV4::get_knob_button() { return mcp.digitalRead(gpio_knob_but6); }
 
