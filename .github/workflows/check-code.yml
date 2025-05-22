@@ -22,4 +22,4 @@ jobs:
         run: pip install --upgrade platformio
 
       - name: Check code
-        run: pio check --fail-on-defect low
+        run: pio check --fail-on-defect=medium --fail-on-defect=low
