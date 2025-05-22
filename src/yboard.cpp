@@ -219,18 +219,18 @@ void YBoardV4::recache_all_io_vals() {
 }
 
 void YBoardV4::recache_io_val_on_interrupt() {
-    uint16_t interrupt_pin = mcp.getLastInterruptPin();
-    if (interrupt_pin == gpio_knob_but6) {
-        knob_button_cached = !mcp.digitalRead(gpio_knob_but6);
-    } else if (interrupt_pin <= gpio_dsw6) {
+    uint8_t interrupt_pin = mcp.getLastInterruptPin();
+    if (interrupt_pin <= gpio_dsw6) {
         uint8_t dip_switch_idx = interrupt_pin - gpio_dsw1;
         bool dip_switch_state = !mcp.digitalRead(interrupt_pin);
         dsw_cached = (dsw_cached & ~(1 << dip_switch_idx)) | (dip_switch_state << dip_switch_idx);
-    } else if (interrupt_pin >= gpio_but1 && interrupt_pin <= gpio_but5) {
+    } else if (interrupt_pin == gpio_knob_but6) {
+        knob_button_cached = !mcp.digitalRead(gpio_knob_but6);
+    } else if (interrupt_pin <= gpio_but5) {
         uint8_t button_idx = interrupt_pin - gpio_but1;
         bool button_state = !mcp.digitalRead(interrupt_pin);
         buttons_cached = (buttons_cached & ~(1 << button_idx)) | (button_state << button_idx);
-    } else if (interrupt_pin >= gpio_sw1 && interrupt_pin <= gpio_sw4) {
+    } else if (interrupt_pin <= gpio_sw4) {
         uint8_t switch_idx = interrupt_pin - gpio_sw1;
         bool switch_state = mcp.digitalRead(interrupt_pin);
         sw_cached = (sw_cached & ~(1 << switch_idx)) | (switch_state << switch_idx);
