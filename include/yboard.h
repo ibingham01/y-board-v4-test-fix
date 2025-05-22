@@ -70,6 +70,12 @@ class YBoardV4 {
     bool get_switch(uint8_t switch_idx);
 
     /*
+     *  This function returns the state of all switches on the board.
+     *  Bit 0 corresponds to switch 1, bit 1 corresponds to switch 2, and so on.
+     */
+    uint8_t get_switches();
+
+    /*
      *  This function returns the state of a button.
      *  The button_idx is an integer between 1 and 5, representing the number of the
      * target button (for example, 1 corresponds to button 1 on the board). The bool
@@ -78,6 +84,12 @@ class YBoardV4 {
      * button being released.
      */
     bool get_button(uint8_t button_idx);
+
+    /*
+     *  This function returns the state of all buttons on the board.
+     *  Bit 0 corresponds to button 1, bit 1 corresponds to button 2, and so on.
+     */
+    uint8_t get_buttons();
 
     /*
      *  This function returns the value of the knob.
@@ -90,7 +102,21 @@ class YBoardV4 {
 
     void set_knob(int64_t value);
 
+    /*
+     *  This function returns the state of a DIP switch.
+     *  The dip_switch_idx is an integer between 1 and 6, representing the number of
+     * target DIP switch (for example, 1 corresponds to DIP switch 1 on the board).
+     * The bool return type means that this function returns a boolean value (true or false).
+     *  True corresponds to the DIP switch being on, and false corresponds to the DIP switch
+     * being off.
+     */
     bool get_dip_switch(uint8_t dip_switch_idx);
+
+    /*
+     *  This function returns the state of all DIP switches on the board.
+     *  Bit 0 corresponds to DIP switch 1, bit 1 corresponds to DIP switch 2, and so on.
+     */
+    uint8_t get_dip_switches();
 
     ////////////////////////////// Speaker/Tones //////////////////////////////////
     /*
@@ -219,16 +245,66 @@ class YBoardV4 {
      */
     accelerometer_data get_accelerometer();
 
+    /*
+     *  This function fetches the I/O values from the GPIO multiplexer,
+     *  and stores them in the cached array.
+     */
+    void recache_all_io_vals();
+
+    /*
+     *  This function recaches just a single I/O value from the GPIO multiplexer,
+     *  based on the last interrupt that was triggered.
+     */
+    void recache_io_val_on_interrupt();
+
     // Display
     Adafruit_SSD1306 display;
 
     // Rotary Encoder
     ESP32Encoder encoder;
 
+    // GPIO multiplixer
+    Adafruit_MCP23X17 mcp;
+
+    // Button indices
+    static constexpr int button_left = 1;
+    static constexpr int button_right = 2;
+    static constexpr int button_up = 3;
+    static constexpr int button_down = 4;
+    static constexpr int button_center = 5;
+
+    // LEDs
+    static constexpr int led_count = 36;
+
+  private:
+    bool wire_begin = false;
+    bool sd_card_present = false;
+
+    // Buttons are stored in a bitmask, with button1 at bit 0, button2 at bit 1, etc.
+    // This is cached from the GPIO multiplexer.
+    uint8_t buttons_cached;
+
+    // Switches, same format as buttons
+    uint8_t sw_cached;
+
+    // Dip switches, same format as buttons
+    uint8_t dsw_cached;
+
+    bool knob_button_cached;
+
+    // LEDs
+    CRGB leds[led_count];
+
+    // I2C buses
+    TwoWire upperWire = TwoWire(0);
+    TwoWire lowerWire = TwoWire(1);
+
+    // Accelerometer
+    SPARKFUN_LIS2DH12 accel;
+
     // LEDs
     static constexpr int led_clock_pin = 4;
     static constexpr int led_data_pin = 5;
-    static constexpr int led_count = 36;
 
     // GPIO Multiplexer
     static constexpr int gpio_dsw1 = 0;
@@ -238,15 +314,16 @@ class YBoardV4 {
     static constexpr int gpio_dsw5 = 4;
     static constexpr int gpio_dsw6 = 5;
     static constexpr int gpio_knob_but6 = 6;
-    static constexpr int gpio_but5 = 7;
-    static constexpr int gpio_but4 = 8;
+    static constexpr int gpio_but1 = 7;
+    static constexpr int gpio_but2 = 8;
     static constexpr int gpio_but3 = 9;
-    static constexpr int gpio_but2 = 10;
-    static constexpr int gpio_but1 = 11;
+    static constexpr int gpio_but4 = 10;
+    static constexpr int gpio_but5 = 11;
     static constexpr int gpio_sw1 = 12;
     static constexpr int gpio_sw2 = 13;
     static constexpr int gpio_sw3 = 14;
     static constexpr int gpio_sw4 = 15;
+    static constexpr int mcp_int_pin = 16;
 
     // Rotary Encoder
     static constexpr int rot_enc_a = 37;
@@ -283,23 +360,6 @@ class YBoardV4 {
     static constexpr int mic_i2s_ws_pin = 41;
     static constexpr int mic_i2s_data_pin = 40;
     static constexpr int mic_i2s_port = 0;
-
-  private:
-    bool wire_begin = false;
-    bool sd_card_present = false;
-
-    // LEDs
-    CRGB leds[led_count];
-
-    // I2C buses
-    TwoWire upperWire = TwoWire(0);
-    TwoWire lowerWire = TwoWire(1);
-
-    // Accelerometer
-    SPARKFUN_LIS2DH12 accel;
-
-    // GPIO multiplixer
-    Adafruit_MCP23X17 mcp;
 
     void setup_i2c();
     void setup_leds();

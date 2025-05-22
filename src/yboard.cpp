@@ -1,14 +1,40 @@
 #include "yboard.h"
 
+/////////////////////////////////// Global Yboard object ///////////////////////
 YBoardV4 Yboard;
 
-YBoardV4::YBoardV4() : display(128, 64, &upperWire) {
+/////////////////////////////////// ISR Handling ///////////////////////////////
+static TaskHandle_t isr_task_handle;
+volatile bool mcp_isr_fired = false;
+
+void IRAM_ATTR mcp_isr() {
+    // mcp_isr_fired = true;
+    xTaskNotifyGive(isr_task_handle);
+}
+
+void isr_task(void *pvParameters) {
+    while (true) {
+        ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
+
+        // Serial.println("ISR fired");
+        Yboard.recache_io_val_on_interrupt();
+        Yboard.mcp.clearInterrupts();
+    }
+}
+/////////////////////////////////// YBoarc Class Methods ///////////////////////
+
+YBoardV4::YBoardV4()
+    : display(128, 64, &upperWire), buttons_cached(0), sw_cached(0), dsw_cached(0),
+      knob_button_cached(false) {
     FastLED.addLeds<APA102, led_data_pin, led_clock_pin, BGR>(leds, led_count);
 }
 
 YBoardV4::~YBoardV4() {}
 
 void YBoardV4::setup() {
+    // Setup interrupt handling task
+    xTaskCreate(isr_task, "isr_task", 4096, NULL, 1, &isr_task_handle);
+
     setup_leds();
     setup_i2c();
     setup_io();
@@ -98,6 +124,38 @@ void YBoardV4::setup_io() {
     mcp.pinMode(gpio_sw3, INPUT);
     mcp.pinMode(gpio_sw4, INPUT);
 
+    mcp.setupInterruptPin(gpio_dsw1, CHANGE);
+    mcp.setupInterruptPin(gpio_dsw2, CHANGE);
+    mcp.setupInterruptPin(gpio_dsw3, CHANGE);
+    mcp.setupInterruptPin(gpio_dsw4, CHANGE);
+    mcp.setupInterruptPin(gpio_dsw5, CHANGE);
+    mcp.setupInterruptPin(gpio_dsw6, CHANGE);
+    mcp.setupInterruptPin(gpio_knob_but6, CHANGE);
+    mcp.setupInterruptPin(gpio_but5, CHANGE);
+    mcp.setupInterruptPin(gpio_but4, CHANGE);
+    mcp.setupInterruptPin(gpio_but3, CHANGE);
+    mcp.setupInterruptPin(gpio_but2, CHANGE);
+    mcp.setupInterruptPin(gpio_but1, CHANGE);
+    mcp.setupInterruptPin(gpio_sw1, CHANGE);
+    mcp.setupInterruptPin(gpio_sw2, CHANGE);
+    mcp.setupInterruptPin(gpio_sw3, CHANGE);
+    mcp.setupInterruptPin(gpio_sw4, CHANGE);
+
+    // Setup interrupt for MCP
+    // mirror INTA/B so only one wire required
+    // active drive so INTA/B will not be floating
+    // INTA/B will be signaled with a LOW
+    mcp.setupInterrupts(true, false, LOW);
+
+    // Set up interrupt pin coming from MCP
+    pinMode(mcp_int_pin, INPUT);
+
+    // Register ISR for MCP interrupt
+    attachInterrupt(digitalPinToInterrupt(mcp_int_pin), mcp_isr, FALLING);
+
+    // Clear any pending interrupts
+    mcp.clearInterrupts();
+
     // Set up pins for rotary encoder
     ESP32Encoder::useInternalWeakPullResistors = puType::none;
     encoder.attachHalfQuad(rot_enc_b, rot_enc_a);
@@ -110,16 +168,19 @@ bool YBoardV4::get_switch(uint8_t switch_idx) {
         return false;
     }
 
-    return mcp.digitalRead(gpio_sw1 + switch_idx - 1);
+    return sw_cached & (1 << (switch_idx - 1));
 }
+
+uint8_t YBoardV4::get_switches() { return sw_cached; }
 
 bool YBoardV4::get_button(uint8_t button_idx) {
-    if (button_idx < 1 || button_idx > 6) {
+    if (button_idx < 1 || button_idx > 5) {
         return false;
     }
-
-    return !mcp.digitalRead(gpio_but5 + button_idx - 1);
+    return buttons_cached & (1 << (button_idx - 1));
 }
+
+uint8_t YBoardV4::get_buttons() { return buttons_cached; }
 
 int64_t YBoardV4::get_knob() { return encoder.getCount(); }
 
@@ -127,14 +188,53 @@ void YBoardV4::reset_knob() { encoder.clearCount(); }
 
 void YBoardV4::set_knob(int64_t value) { encoder.setCount(value); }
 
-bool YBoardV4::get_knob_button() { return !mcp.digitalRead(gpio_knob_but6); }
+bool YBoardV4::get_knob_button() { return knob_button_cached; }
 
 bool YBoardV4::get_dip_switch(uint8_t dip_switch_idx) {
     if (dip_switch_idx < 1 || dip_switch_idx > 6) {
         return false;
     }
+    return dsw_cached & (1 << (dip_switch_idx - 1));
+}
 
-    return !mcp.digitalRead(gpio_dsw1 + dip_switch_idx - 1);
+uint8_t YBoardV4::get_dip_switches() { return dsw_cached; }
+
+void YBoardV4::recache_all_io_vals() {
+    buttons_cached = 0;
+    for (int i = 0; i < 6; i++) {
+        buttons_cached |= (!mcp.digitalRead(gpio_but1 + i)) << i;
+    }
+
+    dsw_cached = 0;
+    for (int i = 0; i < 6; i++) {
+        dsw_cached |= (!mcp.digitalRead(gpio_dsw1 + i)) << i;
+    }
+
+    sw_cached = 0;
+    for (int i = 0; i < 4; i++) {
+        sw_cached |= (mcp.digitalRead(gpio_sw1 + i)) << i;
+    }
+
+    knob_button_cached = !mcp.digitalRead(gpio_knob_but6);
+}
+
+void YBoardV4::recache_io_val_on_interrupt() {
+    uint8_t interrupt_pin = mcp.getLastInterruptPin();
+    if (interrupt_pin <= gpio_dsw6) {
+        uint8_t dip_switch_idx = interrupt_pin - gpio_dsw1;
+        bool dip_switch_state = !mcp.digitalRead(interrupt_pin);
+        dsw_cached = (dsw_cached & ~(1 << dip_switch_idx)) | (dip_switch_state << dip_switch_idx);
+    } else if (interrupt_pin == gpio_knob_but6) {
+        knob_button_cached = !mcp.digitalRead(gpio_knob_but6);
+    } else if (interrupt_pin <= gpio_but5) {
+        uint8_t button_idx = interrupt_pin - gpio_but1;
+        bool button_state = !mcp.digitalRead(interrupt_pin);
+        buttons_cached = (buttons_cached & ~(1 << button_idx)) | (button_state << button_idx);
+    } else if (interrupt_pin <= gpio_sw4) {
+        uint8_t switch_idx = interrupt_pin - gpio_sw1;
+        bool switch_state = mcp.digitalRead(interrupt_pin);
+        sw_cached = (sw_cached & ~(1 << switch_idx)) | (switch_state << switch_idx);
+    }
 }
 
 ////////////////////////////// Speaker/Tones //////////////////////////////////
