@@ -23,7 +23,9 @@ void isr_task(void *pvParameters) {
 }
 /////////////////////////////////// YBoarc Class Methods ///////////////////////
 
-YBoardV4::YBoardV4() : display(128, 64, &upperWire) {
+YBoardV4::YBoardV4()
+    : display(128, 64, &upperWire), buttons_cached(0), sw_cached(0), dsw_cached(0),
+      knob_button_cached(false) {
     FastLED.addLeds<APA102, led_data_pin, led_clock_pin, BGR>(leds, led_count);
 }
 
@@ -220,7 +222,7 @@ void YBoardV4::recache_io_val_on_interrupt() {
     uint16_t interrupt_pin = mcp.getLastInterruptPin();
     if (interrupt_pin == gpio_knob_but6) {
         knob_button_cached = !mcp.digitalRead(gpio_knob_but6);
-    } else if (interrupt_pin >= gpio_dsw1 && interrupt_pin <= gpio_dsw6) {
+    } else if (interrupt_pin <= gpio_dsw6) {
         uint8_t dip_switch_idx = interrupt_pin - gpio_dsw1;
         bool dip_switch_state = !mcp.digitalRead(interrupt_pin);
         dsw_cached = (dsw_cached & ~(1 << dip_switch_idx)) | (dip_switch_state << dip_switch_idx);
