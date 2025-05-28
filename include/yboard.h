@@ -291,15 +291,19 @@ class YBoardV4 {
     // GPIO multiplixer
     Adafruit_MCP23X17 mcp;
 
+    // LEDs
+    static constexpr int led_count = 36;
+    CRGB leds[led_count];
+
+    // Accelerometer
+    SPARKFUN_LIS2DH12 accel;
+
     // Button indices
     static constexpr int button_left = 1;
     static constexpr int button_right = 2;
     static constexpr int button_up = 3;
     static constexpr int button_down = 4;
     static constexpr int button_center = 5;
-
-    // LEDs
-    static constexpr int led_count = 36;
 
   private:
     bool wire_begin = false;
@@ -317,15 +321,9 @@ class YBoardV4 {
 
     bool knob_button_cached;
 
-    // LEDs
-    CRGB leds[led_count];
-
     // I2C buses
     TwoWire upperWire = TwoWire(0);
     TwoWire lowerWire = TwoWire(1);
-
-    // Accelerometer
-    SPARKFUN_LIS2DH12 accel;
 
     // LEDs
     static constexpr int led_clock_pin = 4;
