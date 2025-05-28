@@ -104,10 +104,27 @@ class YBoardV4 {
      */
     int64_t get_knob();
 
+    /*
+     *  This function returns the state of the knob button. The knob button is
+     * pressed by pressing down on the knob.
+     *  The return type is a boolean value (true or false). True corresponds to
+     * the knob button being pressed, and false corresponds to the knob button being
+     * released.
+     */
     bool get_knob_button();
 
+    /*
+     *  This function resets the knob value to 0.
+     *  This is useful if you want to start counting from 0 again.
+     */
     void reset_knob();
 
+    /*
+     *  This function sets the knob value to a specific value.
+     *  The value is an integer representing the new value of the knob.
+     *  This is useful if you want to set the knob to a specific value, for example,
+     * if you want to set it to a specific position.
+     */
     void set_knob(int64_t value);
 
     /*
