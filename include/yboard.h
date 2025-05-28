@@ -61,9 +61,10 @@ class YBoardV4 {
     ////////////////////////////// Switches/Buttons ///////////////////////////////
     /*
      *  This function returns the state of a switch.
-     *  The switch_idx is an integer between 1 and 4, representing the number of the
-     * target switch (for example, 1 corresponds to switch 1 on the board). The bool
-     * return type means that this function returns a boolean value (true or false).
+     *  The switch_idx is an integer between 1 and 4, representing the number of
+     * the target switch (for example, 1 corresponds to switch 1 on the board).
+     * Switches are numbered from left to right, 1 to 4. The bool return type
+     * means that this function returns a boolean value (true or false).
      *  True corresponds to the switch being on, and false corresponds to the switch
      * being off.
      */
@@ -78,8 +79,15 @@ class YBoardV4 {
     /*
      *  This function returns the state of a button.
      *  The button_idx is an integer between 1 and 5, representing the number of the
-     * target button (for example, 1 corresponds to button 1 on the board). The bool
-     * return type means that this function returns a boolean value (true or false).
+     * target button (for example, 1 corresponds to button 1 on the board).
+     * Buttons are configured in the following arrangement:
+     *
+     *        3
+     *    1   4   2
+     *        5
+     *
+     * The bool return type means that this function returns a boolean value
+     * (true or false).
      *  True corresponds to the button being pressed, and false corresponds to the
      * button being released.
      */
