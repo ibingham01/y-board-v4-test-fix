@@ -339,12 +339,7 @@ I2SStream &YBoardV4::get_microphone_stream() { return YAudio::get_mic_stream(); 
 
 ////////////////////////////// Accelerometer /////////////////////////////////////
 bool YBoardV4::setup_accelerometer() {
-    if (!wire_begin) {
-        Wire.begin(sda_pin, scl_pin);
-        wire_begin = true;
-    }
-
-    if (!accel.begin(accel_addr, Wire)) {
+    if (!accel.begin(accel_addr, upperWire)) {
         Serial.println("WARNING: Accelerometer not detected.");
         return false;
     }
