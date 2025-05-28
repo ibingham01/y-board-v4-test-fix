@@ -156,6 +156,9 @@ void YBoardV4::setup_io() {
     // Clear any pending interrupts
     mcp.clearInterrupts();
 
+    // Recache all IO values
+    recache_all_io_vals();
+
     // Set up pins for rotary encoder
     ESP32Encoder::useInternalWeakPullResistors = puType::none;
     encoder.attachHalfQuad(rot_enc_b, rot_enc_a);
