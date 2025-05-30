@@ -204,7 +204,7 @@ uint8_t YBoardV4::get_dip_switches() { return dsw_cached; }
 
 void YBoardV4::recache_all_io_vals() {
     buttons_cached = 0;
-    for (int i = 0; i < 6; i++) {
+    for (int i = 0; i < 5; i++) {
         buttons_cached |= (!mcp.digitalRead(gpio_but1 + i)) << i;
     }
 
