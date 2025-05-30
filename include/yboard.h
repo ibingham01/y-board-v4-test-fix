@@ -286,6 +286,24 @@ class YBoardV4 {
      */
     void recache_io_val_on_interrupt();
 
+    //////////////////////////////////// IR //////////////////////////////////////////
+
+    /*
+     *  This function decodes the IR signal received by the IR receiver. It
+     *  returns true if a valid IR signal was received and decoded, and false
+     *  otherwise. If a valid signal was received, the decoded signal can be
+     *  accessed through the ir_results variable.
+     */
+    bool recv_ir();
+
+    /*
+     *  This function clears the IR receiver's buffer and resets the state of the
+     *  IR receiver. This is necessary to ensure that the IR receiver is ready
+     *  to receive a new signal. Call this function after recv_ir() is
+     *  successful.
+     */
+    void clear_ir();
+
     // Display
     Adafruit_SSD1306 display;
 

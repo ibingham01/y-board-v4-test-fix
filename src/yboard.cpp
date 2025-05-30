@@ -405,3 +405,7 @@ bool YBoardV4::setup_ir() {
     ir_send.begin();
     return true;
 }
+
+bool YBoardV4::recv_ir() { return ir_recv.decode(&ir_results); }
+
+void YBoardV4::clear_ir() { ir_recv.resume(); }
