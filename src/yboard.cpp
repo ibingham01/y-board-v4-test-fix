@@ -25,7 +25,7 @@ void isr_task(void *pvParameters) {
 
 YBoardV4::YBoardV4()
     : display(128, 64, &upperWire), buttons_cached(0), sw_cached(0), dsw_cached(0),
-      knob_button_cached(false) {
+      knob_button_cached(false), ir_recv(ir_rx_pin), ir_send(ir_tx_pin) {
     FastLED.addLeds<APA102, led_data_pin, led_clock_pin, BGR>(leds, led_count);
 }
 
@@ -38,6 +38,7 @@ void YBoardV4::setup() {
     setup_leds();
     setup_i2c();
     setup_io();
+    // setup_ir();
 
     if (setup_sd_card()) {
         Serial.println("SD Card Setup: Success");
@@ -393,5 +394,11 @@ bool YBoardV4::setup_display() {
     display.setCursor(0, 0);
     display.display();
 
+    return true;
+}
+
+bool YBoardV4::setup_ir() {
+    ir_recv.enableIRIn();
+    ir_send.begin();
     return true;
 }

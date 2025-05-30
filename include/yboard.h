@@ -7,6 +7,10 @@
 #include <ESP32Encoder.h>
 #include <FS.h>
 #include <FastLED.h>
+#include <IRrecv.h>
+#include <IRremoteESP8266.h>
+#include <IRsend.h>
+#include <IRutils.h>
 #include <SD.h>
 #include <SparkFun_LIS2DH12.h>
 #include <stdint.h>
@@ -298,6 +302,11 @@ class YBoardV4 {
     // Accelerometer
     SPARKFUN_LIS2DH12 accel;
 
+    // IR devices
+    IRrecv ir_recv;
+    IRsend ir_send;
+    decode_results results;
+
     // Button indices
     static constexpr int button_left = 1;
     static constexpr int button_right = 2;
@@ -384,6 +393,10 @@ class YBoardV4 {
     static constexpr int mic_i2s_data_pin = 40;
     static constexpr int mic_i2s_port = 0;
 
+    // IR Connections
+    static constexpr int ir_tx_pin = 7;
+    static constexpr int ir_rx_pin = 36;
+
     void setup_i2c();
     void setup_leds();
     void setup_io();
@@ -392,6 +405,7 @@ class YBoardV4 {
     bool setup_accelerometer();
     bool setup_sd_card();
     bool setup_display();
+    bool setup_ir();
 };
 
 extern YBoardV4 Yboard;

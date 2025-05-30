@@ -33,7 +33,8 @@
         "adafruit/Adafruit Unified Sensor": "*",
         "madhephaestus/ESP32Encoder": "^0.11.7",
         "arduino-libhelix": "https://github.com/pschatzmann/arduino-libhelix.git#v0.8.6",
-        "arduino-audio-tools": "https://github.com/pschatzmann/arduino-audio-tools.git#v1.0.1"
+        "arduino-audio-tools": "https://github.com/pschatzmann/arduino-audio-tools.git#v1.0.1",
+        "crankyoldgit/IRremoteESP8266": "@2.7.12"
     },
     "frameworks": [
         "arduino"
