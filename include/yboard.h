@@ -305,7 +305,7 @@ class YBoardV4 {
     // IR devices
     IRrecv ir_recv;
     IRsend ir_send;
-    decode_results results;
+    decode_results ir_results;
 
     // Button indices
     static constexpr int button_left = 1;

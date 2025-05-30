@@ -38,7 +38,6 @@ void YBoardV4::setup() {
     setup_leds();
     setup_i2c();
     setup_io();
-    // setup_ir();
 
     if (setup_sd_card()) {
         Serial.println("SD Card Setup: Success");
@@ -59,6 +58,8 @@ void YBoardV4::setup() {
     if (setup_display()) {
         Serial.println("Display Setup: Success");
     }
+
+    setup_ir();
 }
 
 void YBoardV4::setup_i2c() {
@@ -396,6 +397,8 @@ bool YBoardV4::setup_display() {
 
     return true;
 }
+
+//////////////////////////////////// IR //////////////////////////////////////////
 
 bool YBoardV4::setup_ir() {
     ir_recv.enableIRIn();
