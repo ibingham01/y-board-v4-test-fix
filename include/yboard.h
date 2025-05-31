@@ -304,6 +304,13 @@ class YBoardV4 {
      */
     void clear_ir();
 
+    /*
+     *  This function sends an IR signal using the IR transmitter. The signal is
+     *  specified by the results parameter, which should contain a valid IR
+     *  signal to send.
+     */
+    bool send_ir(decode_results &results, uint16_t repeat = 0);
+
     // Display
     Adafruit_SSD1306 display;
 
