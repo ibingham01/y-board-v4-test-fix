@@ -7,6 +7,10 @@
 #include <ESP32Encoder.h>
 #include <FS.h>
 #include <FastLED.h>
+#include <IRrecv.h>
+#include <IRremoteESP8266.h>
+#include <IRsend.h>
+#include <IRutils.h>
 #include <SD.h>
 #include <SparkFun_LIS2DH12.h>
 #include <stdint.h>
@@ -282,6 +286,43 @@ class YBoardV4 {
      */
     void recache_io_val_on_interrupt();
 
+    //////////////////////////////////// IR //////////////////////////////////////////
+
+    /*
+     *  This function decodes the IR signal received by the IR receiver. It
+     *  returns true if a valid IR signal was received and decoded, and false
+     *  otherwise. If a valid signal was received, the decoded signal can be
+     *  accessed through the ir_results variable.
+     */
+    bool recv_ir();
+
+    /*
+     *  This function clears the IR receiver's buffer and resets the state of the
+     *  IR receiver. This is necessary to ensure that the IR receiver is ready
+     *  to receive a new signal. Call this function after recv_ir() is
+     *  successful.
+     */
+    void clear_ir();
+
+    /*
+     *  This function sends an IR signal using the IR transmitter. The signal is
+     *  specified by the results parameter, which should contain a valid IR
+     *  signal to send. The repeat parameter specifies how many times to repeat
+     *  the signal (default is 0, meaning no repeat). The function returns true
+     *  if the signal was sent successfully, and false otherwise.
+     */
+    bool send_ir(decode_results &data, uint16_t repeat = 0);
+
+    /*
+     *  This function sends an IR signal with the specified data and number of
+     *  bits. The data is a 64-bit unsigned integer representing the IR signal
+     *  to send, and nbits is the number of bits in the signal. The repeat
+     *  parameter specifies how many times to repeat the signal (default is 0,
+     *  meaning no repeat). IR is sent using the NEC protocol. The function
+     *  returns true if the signal was sent successfully, and false otherwise.
+     */
+    bool send_ir(uint64_t data, uint16_t nbits, uint16_t repeat = 0);
+
     // Display
     Adafruit_SSD1306 display;
 
@@ -297,6 +338,11 @@ class YBoardV4 {
 
     // Accelerometer
     SPARKFUN_LIS2DH12 accel;
+
+    // IR devices
+    IRrecv ir_recv;
+    IRsend ir_send;
+    decode_results ir_results;
 
     // Button indices
     static constexpr int button_left = 1;
@@ -384,6 +430,10 @@ class YBoardV4 {
     static constexpr int mic_i2s_data_pin = 40;
     static constexpr int mic_i2s_port = 0;
 
+    // IR Connections
+    static constexpr int ir_tx_pin = 7;
+    static constexpr int ir_rx_pin = 36;
+
     void setup_i2c();
     void setup_leds();
     void setup_io();
@@ -392,6 +442,7 @@ class YBoardV4 {
     bool setup_accelerometer();
     bool setup_sd_card();
     bool setup_display();
+    bool setup_ir();
 };
 
 extern YBoardV4 Yboard;

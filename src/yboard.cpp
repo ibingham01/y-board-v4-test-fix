@@ -25,7 +25,7 @@ void isr_task(void *pvParameters) {
 
 YBoardV4::YBoardV4()
     : display(128, 64, &upperWire), buttons_cached(0), sw_cached(0), dsw_cached(0),
-      knob_button_cached(false) {
+      knob_button_cached(false), ir_recv(ir_rx_pin), ir_send(ir_tx_pin) {
     FastLED.addLeds<APA102, led_data_pin, led_clock_pin, BGR>(leds, led_count);
 }
 
@@ -58,6 +58,8 @@ void YBoardV4::setup() {
     if (setup_display()) {
         Serial.println("Display Setup: Success");
     }
+
+    setup_ir();
 }
 
 void YBoardV4::setup_i2c() {
@@ -393,5 +395,46 @@ bool YBoardV4::setup_display() {
     display.setCursor(0, 0);
     display.display();
 
+    return true;
+}
+
+//////////////////////////////////// IR //////////////////////////////////////////
+
+bool YBoardV4::setup_ir() {
+    ir_recv.enableIRIn();
+    ir_send.begin();
+    return true;
+}
+
+bool YBoardV4::recv_ir() { return ir_recv.decode(&ir_results); }
+
+void YBoardV4::clear_ir() { ir_recv.resume(); }
+
+bool YBoardV4::send_ir(decode_results &data, uint16_t repeat) {
+    if (data.rawlen <= 0) {
+        Serial.println("No IR data to send");
+        return false;
+    }
+
+    if (data.decode_type == UNKNOWN) {
+        Serial.println("Unknown IR data type");
+        return false;
+    }
+
+    if (data.decode_type == UNUSED) {
+        Serial.println("Unused IR data type");
+        return false;
+    }
+
+    return ir_send.send(data.decode_type, data.value, data.bits, repeat);
+}
+
+bool YBoardV4::send_ir(uint64_t data, uint16_t nbits, uint16_t repeat) {
+    if (nbits < 1 || nbits > 64) {
+        Serial.printf("ERROR: Invalid number of bits %d. Must be between 1 and 64.\n", nbits);
+        return false;
+    }
+
+    ir_send.sendNEC(data, nbits, repeat);
     return true;
 }
