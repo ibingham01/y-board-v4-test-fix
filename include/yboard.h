@@ -311,7 +311,7 @@ class YBoardV4 {
      *  the signal (default is 0, meaning no repeat). The function returns true
      *  if the signal was sent successfully, and false otherwise.
      */
-    bool send_ir(decode_results &results, uint16_t repeat = 0);
+    bool send_ir(decode_results &data, uint16_t repeat = 0);
 
     /*
      *  This function sends an IR signal with the specified data and number of

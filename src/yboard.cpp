@@ -410,23 +410,23 @@ bool YBoardV4::recv_ir() { return ir_recv.decode(&ir_results); }
 
 void YBoardV4::clear_ir() { ir_recv.resume(); }
 
-bool YBoardV4::send_ir(decode_results &signal, uint16_t repeat) {
-    if (signal.rawlen <= 0) {
+bool YBoardV4::send_ir(decode_results &data, uint16_t repeat) {
+    if (data.rawlen <= 0) {
         Serial.println("No IR data to send");
         return false;
     }
 
-    if (signal.decode_type == UNKNOWN) {
+    if (data.decode_type == UNKNOWN) {
         Serial.println("Unknown IR data type");
         return false;
     }
 
-    if (signal.decode_type == UNUSED) {
+    if (data.decode_type == UNUSED) {
         Serial.println("Unused IR data type");
         return false;
     }
 
-    return ir_send.send(signal.decode_type, signal.value, signal.bits, repeat);
+    return ir_send.send(data.decode_type, data.value, data.bits, repeat);
 }
 
 bool YBoardV4::send_ir(uint64_t data, uint16_t nbits, uint16_t repeat) {
