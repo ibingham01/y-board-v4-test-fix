@@ -426,6 +426,15 @@ bool YBoardV4::send_ir(decode_results &signal, uint16_t repeat) {
         return false;
     }
 
-    ir_send.send(signal.decode_type, signal.value, signal.bits, repeat);
+    return ir_send.send(signal.decode_type, signal.value, signal.bits, repeat);
+}
+
+bool YBoardV4::send_ir(uint64_t data, uint16_t nbits, uint16_t repeat) {
+    if (nbits < 1 || nbits > 64) {
+        Serial.printf("ERROR: Invalid number of bits %d. Must be between 1 and 64.\n", nbits);
+        return false;
+    }
+
+    ir_send.sendNEC(data, nbits, repeat);
     return true;
 }

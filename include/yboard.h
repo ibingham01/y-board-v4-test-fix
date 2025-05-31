@@ -307,9 +307,21 @@ class YBoardV4 {
     /*
      *  This function sends an IR signal using the IR transmitter. The signal is
      *  specified by the results parameter, which should contain a valid IR
-     *  signal to send.
+     *  signal to send. The repeat parameter specifies how many times to repeat
+     *  the signal (default is 0, meaning no repeat). The function returns true
+     *  if the signal was sent successfully, and false otherwise.
      */
     bool send_ir(decode_results &results, uint16_t repeat = 0);
+
+    /*
+     *  This function sends an IR signal with the specified data and number of
+     *  bits. The data is a 64-bit unsigned integer representing the IR signal
+     *  to send, and nbits is the number of bits in the signal. The repeat
+     *  parameter specifies how many times to repeat the signal (default is 0,
+     *  meaning no repeat). IR is sent using the NEC protocol. The function
+     *  returns true if the signal was sent successfully, and false otherwise.
+     */
+    bool send_ir(uint64_t data, uint16_t nbits, uint16_t repeat = 0);
 
     // Display
     Adafruit_SSD1306 display;
