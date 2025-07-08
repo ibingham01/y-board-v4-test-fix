@@ -25,8 +25,10 @@ void isr_task(void *pvParameters) {
 
 YBoardV4::YBoardV4()
     : display(128, 64, &upperWire), buttons_cached(0), sw_cached(0), dsw_cached(0),
-      knob_button_cached(false), ir_recv(ir_rx_pin), ir_send(ir_tx_pin) {
-    FastLED.addLeds<APA102, led_data_pin, led_clock_pin, BGR>(leds, led_count);
+      knob_button_cached(false), ir_recv(ir_rx_pin), ir_send(ir_tx_pin),
+      leds(&leds_with_status_led[1]), status_led(&leds_with_status_led[0]) {
+    FastLED.addLeds<APA102, led_data_pin, led_clock_pin, BGR>(leds_with_status_led,
+                                                              led_count_with_status_led);
 }
 
 YBoardV4::~YBoardV4() {}
@@ -78,7 +80,12 @@ void YBoardV4::set_led_color(uint16_t index, uint8_t red, uint8_t green, uint8_t
         Serial.printf("ERROR: LED index %d out of range (1-%d)\n", index, led_count);
         return;
     }
-    leds[index] = CRGB(red, green, blue);
+    leds[index - 1] = CRGB(red, green, blue);
+    FastLED.show();
+}
+
+void YBoardV4::set_status_led_color(uint8_t red, uint8_t green, uint8_t blue) {
+    *status_led = CRGB(red, green, blue);
     FastLED.show();
 }
 
@@ -100,7 +107,7 @@ void YBoardV4::set_led_brightness(uint8_t brightness) {
 }
 
 void YBoardV4::set_all_leds_color(uint8_t red, uint8_t green, uint8_t blue) {
-    fill_solid(leds + 1, led_count - 1, CRGB(red, green, blue));
+    fill_solid(leds, led_count, CRGB(red, green, blue));
     FastLED.show();
 }
 
