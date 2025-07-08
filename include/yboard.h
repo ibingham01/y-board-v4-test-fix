@@ -62,6 +62,12 @@ class YBoardV4 {
      */
     void set_all_leds_color(uint8_t red, uint8_t green, uint8_t blue);
 
+    /*
+     *  This function sets the color of the status LED.
+     *  The status LED is located in the top-left near the RESET and BOOT buttons.
+     */
+    void set_status_led_color(uint8_t red, uint8_t green, uint8_t blue);
+
     ////////////////////////////// Switches/Buttons ///////////////////////////////
     /*
      *  This function returns the state of a switch.
@@ -333,8 +339,9 @@ class YBoardV4 {
     Adafruit_MCP23X17 mcp;
 
     // LEDs
-    static constexpr int led_count = 36;
-    CRGB leds[led_count];
+    static constexpr int led_count = 35;
+    CRGB *const leds;
+    CRGB *const status_led;
 
     // Accelerometer
     SPARKFUN_LIS2DH12 accel;
@@ -352,6 +359,9 @@ class YBoardV4 {
     static constexpr int button_center = 5;
 
   private:
+    static constexpr int led_count_with_status_led = led_count + 1;
+    CRGB leds_with_status_led[led_count_with_status_led];
+
     bool wire_begin = false;
     bool sd_card_present = false;
 
