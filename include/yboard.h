@@ -331,6 +331,8 @@ class YBoardV4 {
 
     // Display
     Adafruit_SSD1306 display;
+    static constexpr int display_width = 128;
+    static constexpr int display_height = 64;
 
     // Rotary Encoder
     ESP32Encoder encoder;
