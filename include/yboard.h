@@ -358,6 +358,9 @@ class YBoardV4 {
     static constexpr int button_down = 5;
     static constexpr int button_center = 4;
 
+    static constexpr int num_buttons = 5;
+    static constexpr int num_switches = 4;
+
   private:
     static constexpr int led_count_with_status_led = led_count + 1;
     CRGB leds_with_status_led[led_count_with_status_led];
