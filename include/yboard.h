@@ -331,6 +331,8 @@ class YBoardV4 {
 
     // Display
     Adafruit_SSD1306 display;
+    static constexpr int display_width = 128;
+    static constexpr int display_height = 64;
 
     // Rotary Encoder
     ESP32Encoder encoder;
@@ -355,8 +357,11 @@ class YBoardV4 {
     static constexpr int button_left = 1;
     static constexpr int button_right = 2;
     static constexpr int button_up = 3;
-    static constexpr int button_down = 4;
-    static constexpr int button_center = 5;
+    static constexpr int button_down = 5;
+    static constexpr int button_center = 4;
+
+    static constexpr int num_buttons = 5;
+    static constexpr int num_switches = 4;
 
   private:
     static constexpr int led_count_with_status_led = led_count + 1;
