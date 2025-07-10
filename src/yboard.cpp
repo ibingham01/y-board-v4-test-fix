@@ -28,7 +28,7 @@ YBoardV4::YBoardV4()
       knob_button_cached(false), ir_recv(ir_rx_pin), ir_send(ir_tx_pin),
       leds(&leds_with_status_led[1]), status_led(&leds_with_status_led[0]) {
     FastLED.addLeds<APA102, led_data_pin, led_clock_pin, BGR>(leds_with_status_led,
-                                                              led_count_with_status_led);
+                                                              num_leds_with_status_led);
 }
 
 YBoardV4::~YBoardV4() {}
@@ -76,8 +76,8 @@ void YBoardV4::setup_leds() {
 }
 
 void YBoardV4::set_led_color(uint16_t index, uint8_t red, uint8_t green, uint8_t blue) {
-    if (index < 1 || index >= led_count) {
-        Serial.printf("ERROR: LED index %d out of range (1-%d)\n", index, led_count);
+    if (index < 1 || index > num_leds) {
+        Serial.printf("ERROR: LED index %d out of range (1-%d)\n", index, num_leds);
         return;
     }
     leds[index - 1] = CRGB(red, green, blue);
@@ -107,7 +107,7 @@ void YBoardV4::set_led_brightness(uint8_t brightness) {
 }
 
 void YBoardV4::set_all_leds_color(uint8_t red, uint8_t green, uint8_t blue) {
-    fill_solid(leds, led_count, CRGB(red, green, blue));
+    fill_solid(leds, num_leds, CRGB(red, green, blue));
     FastLED.show();
 }
 
@@ -176,7 +176,7 @@ void YBoardV4::setup_io() {
 
 ////////////////////////////// Switches/Buttons ///////////////////////////////
 bool YBoardV4::get_switch(uint8_t switch_idx) {
-    if (switch_idx < 1 || switch_idx > 4) {
+    if (switch_idx < 1 || switch_idx > num_switches) {
         return false;
     }
 
@@ -186,7 +186,7 @@ bool YBoardV4::get_switch(uint8_t switch_idx) {
 uint8_t YBoardV4::get_switches() { return sw_cached; }
 
 bool YBoardV4::get_button(uint8_t button_idx) {
-    if (button_idx < 1 || button_idx > 5) {
+    if (button_idx < 1 || button_idx > num_buttons) {
         return false;
     }
     return buttons_cached & (1 << (button_idx - 1));

@@ -341,7 +341,7 @@ class YBoardV4 {
     Adafruit_MCP23X17 mcp;
 
     // LEDs
-    static constexpr int led_count = 35;
+    static constexpr int num_leds = 35;
     CRGB *const leds;
     CRGB *const status_led;
 
@@ -364,8 +364,8 @@ class YBoardV4 {
     static constexpr int num_switches = 4;
 
   private:
-    static constexpr int led_count_with_status_led = led_count + 1;
-    CRGB leds_with_status_led[led_count_with_status_led];
+    static constexpr int num_leds_with_status_led = num_leds + 1;
+    CRGB leds_with_status_led[num_leds_with_status_led];
 
     bool wire_begin = false;
     bool sd_card_present = false;
