@@ -99,8 +99,6 @@ void YBoardV4::set_led_brightness(uint8_t brightness) {
     float normalized = (float)brightness / total_steps; // Normalize step to [0, 1]
     int adjusted_brightness = max_brightness * pow(normalized, gamma);
 
-    Serial.printf("Setting brightness to %d (%d)\n", adjusted_brightness, brightness);
-
     // Apply the brightness to all LEDs
     FastLED.setBrightness(adjusted_brightness);
     FastLED.show();
