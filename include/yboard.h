@@ -1,12 +1,14 @@
 #ifndef YBOARDV4_H
 #define YBOARDV4_H
 
+#include <FastLED.h> // Include FastLED first to avoid macro collisions
+
+#include <Adafruit_GFX.h>
 #include <Adafruit_MCP23X17.h>
 #include <Adafruit_SSD1306.h>
 #include <AudioTools.h>
 #include <ESP32Encoder.h>
 #include <FS.h>
-#include <FastLED.h>
 #include <IRrecv.h>
 #include <IRremoteESP8266.h>
 #include <IRsend.h>
