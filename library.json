@@ -23,7 +23,7 @@
     "license": "MIT",
     "homepage": "https://y-board.github.io",
     "dependencies": {
-        "FastLED": "https://github.com/FastLED/FastLED.git",
+        "FastLED": "https://github.com/FastLED/FastLED",
         "sparkfun/SparkFun LIS2DH12 Arduino Library": "^1.0.3",
         "adafruit/Adafruit SSD1306": "^2.5.10",
         "adafruit/Adafruit MCP23017 Arduino Library": "^2.3.2",
